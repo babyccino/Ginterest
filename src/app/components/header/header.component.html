@@ -1,0 +1,5 @@
+<a href="/api/auth/twitter" class="btn btn-info" role="button"><i class="fa fa-twitter"></i>Sign in with Twitter</a>
+<div *ngIf="isAuthenticated">
+	<div>{{user.twitter.displayName}}</div>
+	<img [src]="user.twitter.displayUrl">
+</div>

@@ -1,0 +1,14 @@
+<div>
+	<form [formGroup]="formdata" (ngSubmit) = "onSubmit(formdata.value, $event)" >
+		<input type="text" class="fortextbox" name="title" placeholder="title" 
+			formControlName="title">
+		<br/>
+		<input type="text" class="fortextbox" name="body" placeholder="body" 
+			formControlName="body">
+		<br/>
+		<input type="text" class="fortextbox" name="url" placeholder="url" 
+			formControlName="url">
+		<br/>
+		<input type="submit" class="forsubmit" value="Submit">
+	</form>
+</div>
