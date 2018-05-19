@@ -9,7 +9,7 @@ import { User } from './../../core/models/user';
 	styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-	isAuthenticated: bool = false;
+	isAuthenticated: boolean = false;
 	user: User = {} as User;
 
 	constructor(private userService: UserService) { }

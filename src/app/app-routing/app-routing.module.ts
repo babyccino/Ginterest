@@ -5,7 +5,7 @@ import { TestComponent } from './../components/test/test.component';
 
 const routes: Routes = [
   {
-    path: ''
+    path: '',
     component: BoardComponent,
     pathMatch: 'full'
   }

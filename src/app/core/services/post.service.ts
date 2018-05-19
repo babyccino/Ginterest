@@ -5,7 +5,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 
 import { ApiService } from './api.service'
 
-import { Post } from './../models/user';
+import { Post } from './../models/post';
 
 @Injectable({
 	providedIn: 'root'
@@ -27,7 +27,7 @@ export class PostService {
 				this.postsSubject.next(response);
 			},
 			err => {
-				console.log('error retrieving posts');
+				console.log('error retrieving posts, err: ', err);
 			}
 		);
 	}
@@ -40,7 +40,7 @@ export class PostService {
 				this.postsSubject.next(arr);
 			},
 			err => {
-				console.log('Error: ', err);
+				console.log('Error adding post: ', err);
 			}
 		);
 	}

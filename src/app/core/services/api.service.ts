@@ -21,7 +21,7 @@ export class ApiService {
 			.pipe(
 				map(res => res.json())
 			).pipe(
-				catchError(err => throw err)
+				catchError(err => {throw err})
 			);
 	}
 
@@ -33,7 +33,7 @@ export class ApiService {
 			).pipe(
 				map(res => res.json())
 			).pipe(
-				catchError(err => throw err)
+				catchError(err => {throw err})
 			);
 	}
 
@@ -45,7 +45,7 @@ export class ApiService {
 			).pipe(
 				map(res => res.json())
 			).pipe(
-				catchError(err => throw err)
+				catchError(err => {throw err})
 			);
 	}
 
@@ -55,7 +55,7 @@ export class ApiService {
 			).pipe(
 				map(res => res.json())
 			).pipe(
-				catchError(err => throw err)
+				catchError(err => {throw err})
 			);
 	}
 
