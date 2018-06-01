@@ -1,3 +1,1 @@
-# Gintrest
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.1.
+Just a small MEAN stack pintrest clone, front end is not even slightly done yet, back end has most of its functionality working though.
