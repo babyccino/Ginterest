@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { AddPostFormComponent } from './../add-post-form/add-post-form.component'
 
@@ -15,16 +16,8 @@ import { Post } from './../../core/models/post';
 export class HeaderComponent implements OnInit {
 	private _headerVisible: boolean = true;
 	private _isAuthenticated: boolean = true;
-	private _user: User = {
-		_id: '5afcfacdc2b2a82344772cf5',
-		twitter: {
-			id : "845180875704692737",
-			token : "845180875704692737-9OWnm60RtkLD9rnGEprKAc5VHrP3oih",
-			username : "babyccino1",
-			displayName : "Gus Ryan",
-			displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3i_normal.jpg"
-		}
-	};
+	private _user: User;
+	private _userViewing: string = "/";
 
   public signUpForm: FormGroup;
 
@@ -36,10 +29,12 @@ export class HeaderComponent implements OnInit {
 	public get headerVisible()		{ return this._headerVisible; }
 	public get twitterUrl()				{ return `https://twitter.com/${this._user.twitter.username}`; }
 	public get user()							{ return this._user; }
+	public get userViewing()			{ return this._userViewing; }
 
 	constructor(
-		private userService: UserService,
-		private fb: FormBuilder
+		private router: Router,
+		private fb: FormBuilder,
+		private userService: UserService
 	) { }
 
 	@HostListener('window:resize', ['$event'])
@@ -67,9 +62,14 @@ export class HeaderComponent implements OnInit {
 				Validators.pattern('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$')
 			]],
 			body: ''
-		})
-		//this.userService.currentUser.subscribe(res => this._user = res)
-		//this.userService.isAuthenticated.subscribe(res => this._isAuthenticated = res)
+		});
+		this.router.events.subscribe(event => {
+			if (event instanceof NavigationEnd) {
+				this._userViewing = event.url.slice(1);
+			}
+		});
+		this.userService.currentUser.subscribe(res => this._user = res)
+		this.userService.isAuthenticated.subscribe(res => this._isAuthenticated = res)
 	}
 
 	public onFormSubmit(): void {

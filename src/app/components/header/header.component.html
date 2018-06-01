@@ -1,47 +1,13 @@
-<!--
-<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-	<a class="navbar-brand" href="#">Navbar</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-
-	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
-				<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Link</a>
-			</li>
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Dropdown
-				</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="#">Action</a>
-					<a class="dropdown-item" href="#">Another action</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#">Something else here</a>
-				</div>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link disabled" href="#">Disabled</a>
-			</li>
-		</ul>
-		<form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
-	</div>
-</nav>
--->
 <div class="my-nav-wrap">
 	<div class="my-nav-container">
 		<div class="my-nav">
-			<a class="animation-transition button-container home" [routerLink]="'/'">Home</a>
-			<div class="dropdown-container animation-transition my-nav-left button-container">
+			<a class="animation-transition button-container home"
+				[ngClass]="{'underline': userViewing == ''}" [routerLink]="'/'">Home</a>
+			<a class="animation-transition button-container my-nav-left underline">{{userViewing}}</a>
+			<div class="dropdown-container animation-transition button-container"
+				*ngIf="isAuthenticated">
 				<button class="dropdown-button">Post</button>
-				<!-- tabindex to make elements focusable -->
+				<!-- tabindex to make elements focusable, necessary for the css only dropdown -->
 				<div class="dropdown-content">
 					<div class="new-post-header">
 						<div class="new-post-title" tabindex="-1">New Post</div>
@@ -52,15 +18,16 @@
 				</div>
 				<div class="screen"></div>
 			</div>
-			<a class="img-container" [routerLink]="['/', user.twitter.username]">
+			<a class="img-container" [routerLink]="['/', user.twitter.username]"
+				*ngIf="isAuthenticated">
 				<img class="twitter" [src]="user.twitter.displayUrl">
 			</a>
-		</div>
-		<div class="unauthenticated" *ngIf="!isAuthenticated">
-			<a href="/api/auth/twitter" class="btn btn-info"
-				role="button">
-				<i class="fa fa-twitter"></i>Sign in with Twitter
-			</a>
+			<div class="unauthenticated" *ngIf="!isAuthenticated">
+				<a href="/api/auth/twitter" class="btn btn-info"
+					role="button">
+					<i class="fa fa-twitter"></i>Sign in with Twitter
+				</a>
+			</div>
 		</div>
 	</div>
 </div>
