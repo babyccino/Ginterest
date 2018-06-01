@@ -84,7 +84,7 @@ $nav-height: 70px;
 		z-index: 2;
 
 		&:hover {
-			text-decoration:underline;
+			text-decoration: underline;
 		}
 
 		&:focus ~ .dropdown-content {
@@ -108,8 +108,8 @@ $nav-height: 70px;
 		width: 400px;
 		top: 50%;
 		left: 50%;
-		opacity: 0;
-		transform: translate(-50%, -50%) scale(0.0);
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1.0);
 		background: white;
 		display: flex;
 		flex-direction: column;
@@ -178,4 +178,11 @@ $nav-height: 70px;
 .twitter {
 	border-radius: 50%;
 	box-shadow: 0 0 2px black;
+}
+
+@media only screen and (max-width: 410px) {
+	.dropdown-content {
+		width: 95% !important;
+		margin-top: 22px;
+	}
 }
