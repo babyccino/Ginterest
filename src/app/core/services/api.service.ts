@@ -15,8 +15,8 @@ export class ApiService {
 		this.headers.append('Content-type', 'application/json');
 	}
 
-	get(path: string): Observable<any> {
-		console.log(`GET ${path}`);
+	public get(path: string): Observable<any> {
+		console.log(`GET ${this.api_url}${path}`);
 		return this.http.get(`${this.api_url}${path}`)
 			.pipe(
 				map(res => res.json())
@@ -25,7 +25,7 @@ export class ApiService {
 			);
 	}
 
-	put(path: string, body: Object = {}): Observable<any> {
+	public put(path: string, body: Object = {}): Observable<any> {
 		return this.http.put(
 				`${this.api_url}${path}`,
 				JSON.stringify(body),
@@ -37,7 +37,7 @@ export class ApiService {
 			);
 	}
 
-	post(path: string, body: Object = {}): Observable<any> {
+	public post(path: string, body: Object = {}): Observable<any> {
 		return this.http.post(
 				`${this.api_url}${path}`,
 				JSON.stringify(body),
@@ -49,7 +49,7 @@ export class ApiService {
 			);
 	}
 
-	delete(path: string): Observable<any> {
+	public delete(path: string): Observable<any> {
 		return this.http.delete(
 				`${this.api_url}${path}`
 			).pipe(

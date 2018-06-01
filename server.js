@@ -3,6 +3,8 @@ const Express = require('express');
 const Path = require('path');
 const Http = require('http');
 const BodyParser = require('body-parser');
+const Cors = require('cors');
+const Fs = require('fs');
 
 // API file for interacting with MongoDB
 const index = require('./server/routes/index');
@@ -11,8 +13,8 @@ const api = require('./server/routes/api');
 const app = Express();
 
 app.use(function (err, req, res, next) {
-  console.error(err.stack)
-  res.status(500).send('Something broke!')
+	console.error(err.stack)
+	res.status(500).send('Something broke!')
 });
 
 // Parsers for POST data

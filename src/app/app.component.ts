@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './core/services/user.service'
-import { PostService } from './core/services/post.service'
+
+import { UserService } from './core/services/user.service';
+import { PostService } from './core/services/post.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent implements OnInit {
 
   constructor(
   	private userService: UserService,
-  	private postService: PostService
+    private postService: PostService
   ) {}
 
   ngOnInit() {

@@ -6,6 +6,7 @@ export interface Post {
 		displayUrl: string
 	},
 	title:string,
+	url:string,
 	body:string,
-	url:string
+	createdAt:Date
 }

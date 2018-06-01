@@ -12,10 +12,10 @@ import { BoardComponent } from './components/board/board.component';
 import { AddPostFormComponent } from './components/add-post-form/add-post-form.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { PostComponent } from './components/post/post.component';
 
 import { TestComponent } from './components/test/test.component';
 
-import { DataService } from './core/services/data.service';
 import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { PostService } from './core/services/post.service';
@@ -27,7 +27,8 @@ import { PostService } from './core/services/post.service';
     AddPostFormComponent,
     FooterComponent,
     HeaderComponent,
-    TestComponent
+    TestComponent,
+    PostComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +39,6 @@ import { PostService } from './core/services/post.service';
     AppRoutingModule
   ],
   providers: [
-  	DataService,
   	ApiService,
     UserService,
     PostService

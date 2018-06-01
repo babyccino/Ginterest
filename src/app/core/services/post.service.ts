@@ -14,13 +14,11 @@ export class PostService {
 	private postsSubject = new BehaviorSubject<Post[]>([] as Post[]);
 	public posts = this.postsSubject.asObservable().pipe(distinctUntilChanged());
 
-	constructor(
+	constructor (
 		private apiService: ApiService
-	) {
-		console.log('post service connected');
-	}
+	) { }
 
-	populate() {
+	public populate(): void {
 		this.apiService.get('/posts').subscribe(
 			response => {
 				console.log('retrieved posts');
@@ -32,7 +30,11 @@ export class PostService {
 		);
 	}
 
-	addPost(post: Post) {
+	public fromUser(user: string): Observable<Post[]> {
+		return this.apiService.get(`/posts/by?username=${user}`);
+	}
+
+	public addPost(post: Post): void {
 		this.apiService.post('/post', post).subscribe(
 			response => {
 				let arr = this.postsSubject.value;
@@ -45,7 +47,7 @@ export class PostService {
 		);
 	}
 
-	getPosts(): Post[] {
+	public getPosts(): Post[] {
 		return this.postsSubject.value;
 	}
 	
