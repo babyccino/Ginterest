@@ -8,11 +8,14 @@ const routes: Routes = [
     path: '',
     component: BoardComponent,
     pathMatch: 'full'
+  }, {
+  	path: ':user',
+  	component: BoardComponent
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { enableTracing: true })],
   exports: [RouterModule],
   providers: []
 })
