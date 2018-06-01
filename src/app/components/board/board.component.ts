@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { PostComponent } from './../post/post.component';
 
@@ -14,15 +14,19 @@ import { Post } from './../../core/models/post';
 	styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit {
-	private posts:Post[] = [];
-	private columnCount:number = 4;
-	private profile:boolean = false;
-	private user:string;
-	private sub;
+	private _posts:Post[] = [];
+	private _columnCount:number = 4;
+	private _user:string;
+	private _sub;
+
+	public get posts()				{ return this._posts; }
+	public get columnCount()	{ return this._columnCount; }
+	public get user()					{ return this._user; }
+	public get sub()					{ return this._sub; }
 
 	constructor (
-		private route: ActivatedRoute,
-		private postService: PostService
+		private _route: ActivatedRoute,
+		private _postService: PostService
 	) { }
 
 	@HostListener('window:resize', ['$event'])
@@ -32,19 +36,18 @@ export class BoardComponent implements OnInit {
 
 	ngOnInit() {
 		this.setColumnCount()
-		this.route.paramMap
+		this._route.paramMap
 			.pipe(distinctUntilChanged())
 			.subscribe(params => {
-				console.log('user: ', params.get('user'));
-				this.user = params.get('user');
-				if (!this.user) {
-					if (this.sub) this.sub.unsubscribe();
-					this.sub = this.postService.posts.subscribe(res => this.posts = res);
+				this._user = params.get('user');
+				if (!this._user) {
+					if (this._sub) this._sub.unsubscribe();
+					this._sub = this._postService.posts.subscribe(res => this._posts = res);
 				} else {
-					if (this.sub) this.sub.unsubscribe();
-					this.sub = this.postService.fromUser(this.user)
+					if (this._sub) this._sub.unsubscribe();
+					this._sub = this._postService.fromUser(this._user)
 						.subscribe(
-							res => this.posts = res,
+							res => this._posts = res,
 							err => this.userNotFound()
 						);
 				}
@@ -53,11 +56,11 @@ export class BoardComponent implements OnInit {
 
 	private setColumnCount(): void {
 	  if (window.innerWidth > 800)
-	  	this.columnCount = 4;
+	  	this._columnCount = 4;
 	  else if (window.innerWidth > 450)
-	  	this.columnCount = 2;
+	  	this._columnCount = 2;
 	  else
-	  	this.columnCount = 1;
+	  	this._columnCount = 1;
 	}
 
 	private userNotFound(): void {

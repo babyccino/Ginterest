@@ -193,6 +193,10 @@ router.post('/post/new', isLoggedIn, (req, res) => {
 	}
 });
 
+router.get('/user', isLoggedIn, (req, res) => {
+	res.json(req.user);
+});
+
 /* 
 let user = {
 			_id: '5b0ab85fcfe0e825a6cc33d0',

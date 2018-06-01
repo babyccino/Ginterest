@@ -35,11 +35,14 @@ export class PostService {
 	}
 
 	public addPost(post: Post): void {
-		this.apiService.post('/post', post).subscribe(
+		this.apiService.post('/post/new', post).subscribe(
 			response => {
+				console.log('response: ', response);
+				// add post to posts without querying server again
 				let arr = this.postsSubject.value;
-				arr.push(post);
+				arr.unshift(post);
 				this.postsSubject.next(arr);
+				console.log('this.postsSubject.value: ', this.postsSubject.value);
 			},
 			err => {
 				console.log('Error adding post: ', err);

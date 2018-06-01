@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { UserService } from './../../core/services/user.service'
+import { UserService } from './../../core/services/user.service';
+import { PostService } from './../../core/services/post.service';
 import { User } from './../../core/models/user';
 import { Post } from './../../core/models/post';
 
@@ -11,7 +12,7 @@ import { Post } from './../../core/models/post';
 	styleUrls: ['./add-post-form.component.scss']
 })
 export class AddPostFormComponent {
-	private regExp: string = '^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$';
+	private regExp: string = '^(http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?';
 	private isAuthenticated: boolean = true;
 	private user: User = {
 		_id: '5afcfacdc2b2a82344772cf5',
@@ -26,8 +27,9 @@ export class AddPostFormComponent {
   private signUpForm: FormGroup;
 
 	constructor (
+		private fb: FormBuilder,
 		private userService: UserService,
-		private fb: FormBuilder
+		private postService: PostService
 	) { }
 
 	ngOnInit() {
@@ -56,6 +58,7 @@ export class AddPostFormComponent {
 				displayUrl: this.user.twitter.displayUrl
 			};
 			console.log('posting: ', post);
+			this.postService.addPost(post);
 		}
 	}
 }
