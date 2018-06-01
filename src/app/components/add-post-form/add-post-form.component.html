@@ -1,14 +1,65 @@
-<div>
-	<form [formGroup]="formdata" (ngSubmit) = "onSubmit(formdata.value, $event)" >
-		<input type="text" class="fortextbox" name="title" placeholder="title" 
-			formControlName="title">
-		<br/>
-		<input type="text" class="fortextbox" name="body" placeholder="body" 
-			formControlName="body">
-		<br/>
-		<input type="text" class="fortextbox" name="url" placeholder="url" 
-			formControlName="url">
-		<br/>
-		<input type="submit" class="forsubmit" value="Submit">
-	</form>
-</div>
+<form [formGroup]="signUpForm"
+	(ngSubmit)="onFormSubmit()"
+	class="my-form">
+	<fieldset>
+			<!--- Title Block -->
+		<div class="form-group">
+			<label for="inputTitle">Title</label>
+			
+			<div>
+				<input type="text"
+					id="inputTitle" formControlName="title"
+					placeholder="Title" class="form-control"
+					[ngClass]="{'invalid-border': title.invalid && title.touched}">
+			</div>
+
+			<!-- Title error block -->
+			<div class="invalid-text" *ngIf="title.invalid && title.touched">
+				<small *ngIf = "title.errors?.required">
+						Title field can't be blank
+				</small>
+			</div>
+		</div>
+
+		<!--- URL Block -->
+		<div class="form-group">
+			<label for="inputURL">URL</label>
+			
+			<div>
+				<input type="text"
+					id="inputURL" formControlName="url"
+					placeholder="URL" class="form-control"
+					[ngClass]="{'invalid-border': url.invalid && url.touched}">
+			</div>
+
+			<!-- URL error block -->
+			<div class="invalid-text" *ngIf="url.invalid && url.touched">
+				<small *ngIf = "url.errors?.required">
+						URL field can't be blank
+				</small>
+				<small *ngIf = "url.errors?.pattern">
+						Invalid URL
+				</small>
+			</div>
+		</div>
+
+		<!--- Body Block -->
+		<div class="form-group body-block">
+			<label for="inputBody">Body</label>
+			
+			<div>
+				<textarea type="text"
+					id="inputBody" formControlName="body"
+					placeholder="Body" rows="5"
+					class="form-control"></textarea>
+				<small>Posts do not require a body</small>
+			</div>
+		</div>
+		
+		<!--- Buttons Block -->
+		<div class="button-container">
+			<button type="reset" class="btn btn-default">Clear</button>
+			<button type="submit" [disabled] = "!signUpForm.valid" class="btn btn-primary">Submit</button>
+		</div>
+	</fieldset>
+</form>
