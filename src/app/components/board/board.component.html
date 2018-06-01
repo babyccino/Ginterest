@@ -1,3 +1,39 @@
-<div>{{message}}</div>
-<div class="gallery">
+<div class="gallery-row">
+	<ng-container *ngIf="columnCount == 4">
+		<div class="gallery-column-4">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="!(i % 4)"></app-post>
+			</ng-container>
+		</div>
+		<div class="gallery-column-4">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="!((i-1) % 4)"></app-post>
+			</ng-container>
+		</div>
+		<div class="gallery-column-4">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="!((i-2) % 4)"></app-post>
+			</ng-container>
+		</div>
+		<div class="gallery-column-4">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="!((i-3) % 4)"></app-post>
+			</ng-container>
+		</div>
+	</ng-container>
+	<ng-container *ngIf="columnCount == 2">
+		<div class="gallery-column-2">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="!(i % 2)"></app-post>
+			</ng-container>
+		</div>
+		<div class="gallery-column-2">
+			<ng-container *ngFor="let post of posts; let i = index">
+				<app-post [post]="post" *ngIf="i % 2"></app-post>
+			</ng-container>
+		</div>
+	</ng-container>
+	<div class="gallery-column-1" *ngIf="columnCount == 1">
+		<app-post *ngFor="let post of posts; let i = index" [post]="post"></app-post>
+	</div>
 </div>

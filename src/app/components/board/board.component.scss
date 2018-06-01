@@ -1,0 +1,38 @@
+* {
+		box-sizing: border-box;
+}
+
+body {
+		margin: 0;
+		font-family: Arial;
+}
+
+.header {
+		text-align: center;
+		padding: 32px;
+}
+
+.gallery-row {
+	display: -ms-flexbox; /* IE10 */
+	display: flex;
+	-ms-flex-wrap: wrap; /* IE10 */
+	flex-wrap: wrap;
+
+	.gallery-column-4 {
+		-ms-flex: 25%; /* IE10 */
+		flex: 25%;
+		max-width: 25%;
+	}
+
+	.gallery-column-2 {
+		-ms-flex: 50%;
+		flex: 50%;
+		max-width: 50%;
+	}
+
+	.gallery-column-1 {
+		-ms-flex: 100%;
+		flex: 100%;
+		max-width: 100%;
+	}
+}
