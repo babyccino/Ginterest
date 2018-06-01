@@ -5,7 +5,7 @@
 				[ngClass]="{'underline': userViewing == ''}" [routerLink]="'/'">Home</a>
 			<a class="animation-transition button-container my-nav-left underline">{{userViewing}}</a>
 			<div class="dropdown-container animation-transition button-container"
-				>
+				*ngIf="isAuthenticated">
 				<button class="dropdown-button">Post</button>
 				<!-- tabindex to make elements focusable, necessary for the css only dropdown -->
 				<div class="dropdown-content">
