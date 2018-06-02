@@ -3,7 +3,8 @@ const Express       	= require('express'),
 			Passport      	= require('passport'),
 			Session       	= require('express-session'),
 			CookieSession   = require('cookie-session'),
-			TwitterStrategy	= require('passport-twitter');
+			TwitterStrategy	= require('passport-twitter'),
+			SerializeError 	= require('serialize-error');
 
 // Models
 const User = require('./../models/user'),
@@ -59,24 +60,25 @@ router.use(Passport.initialize());
 router.use(Passport.session());
 router.use(function (err, req, res, next) {
 	sendError(err, res);
+	next(err);
 });
 
 function sendError(err, res) {
 	let message = typeof(err) == 'object' ? err.message: err;
-	console.log("error: ", message);
 	if (err.stack)
-		console.log("error stack: ", message);
-	return res.status(500).send(err);
+		console.log("error stack: ", err.stack);
+
+	return res.status(500).json(SerializeError(err));
 }
 
 Passport.serializeUser((user, done) => {
 	console.log('serialising user...');
-	done(null, user.id);
+	return done(null, user.id);
 });
 
 Passport.deserializeUser((id, done) => {
 	console.log('deserialising user...');
-	User.findById(id, (err, user) => {
+	const user = User.findById(id, (err, user) => {
 		console.log('user found');
 		done(err, user);
 	});
@@ -92,109 +94,104 @@ function isLoggedIn(req, res, next) {
 	}
 }
 
-function newPost(res, post, user) {
-		User.findById(user._id, (err, foundUser) => {
-			if (err) return sendError("user not found", res);
-	
-			if (foundUser) {
-				let newPost					= new Post();
-						newPost.userId	= foundUser._id;
-						newPost.title 	= post.title;
-						newPost.url 		= post.url;
-						newPost.body 		= post.body;
-	
-				newPost.save((err, savedPost) => {
-					if (err) return sendError(err, res);
+async function newPost(res, post, user) {
+	const foundUser = await User.findById(user._id)
+		.select({_id: 1, twitter: 1})
+		.exec();
+	if (!foundUser) throw Error("user not found");
 
-					savedPost.twitter = {
-						username: foundUser.twitter.username,
-						displayUrl: foundUser.twitter.displayUrl
-					};
-					return res.json(savedPost);
-				});
-			} else
-				return sendError("user not found", res);
-		});
+	let newPost					= new Post();
+			newPost.userId	= foundUser._id;
+			newPost.title 	= post.title;
+			newPost.url 		= post.url;
+			newPost.body 		= post.body;
+
+	newPost.save((err, savedPost) => {
+		if (err) return sendError(err, res);
+
+		savedPost.twitter = {
+			username: foundUser.twitter.username,
+			displayUrl: foundUser.twitter.displayUrl
+		};
+		return res.json(savedPost);
+	});
 }
 
 router.get('/auth/twitter', Passport.authenticate('twitter'));
 router.get('/auth/twitter/callback',
 	Passport.authenticate('twitter', { failureRedirect: '/' }),
 	(req, res) => {
-		console.log('req.user', req.user);
-		console.log('req.session', req.session);
-		res.redirect('/');
+		//console.log('req.user', req.user);
+		//console.log('req.session', req.session);
+		return res.redirect('/');
 	}
 );
 
 router.get('/logout', (req, res) => {
 	console.log('logging out');
 	req.logout();
-	res.redirect('/');
+	return res.redirect('/');
 });
-
-router.get('/posts', (req, res) => {
-	Post.find({})
-		.sort('-createdAt')
-		.exec((err, posts) => {
-			if (err) return sendError(err, res);
-
-			res.json(posts);
-	});
-});
-
-router.get('/posts/by', (req, res) => {
-	if (req.query._id) {
-		// console.log('req.query.id: ', req.query._id);
-		Post.find({'userId': req.query._id})
-		.sort('-createdAt')
-		.exec((err, posts) => {
-			if (err) return sendError("user not found", res);
+router.get('/posts', async (req, res) => {
+	try {
+		if (req.query._id || req.query.username){
+			let query = {};
+			if (req.query._id) query._id = req.query._id;
+			else query['twitter.username'] = req.query.username;
+			// console.log('req.query: ', req.query);
+			// console.log('query: ', query);
 	
-			res.json(posts);
-		});
-	} else if (req.query.username) {
-		// console.log('req.query.username: ', req.query.username);
-		User.findOne({'twitter.username': req.query.username})
-			.select('_id')
-			.exec((err, user) => {
-				if (err) return sendError("user not found", res);
-				// console.log('user: ', user);
-				if (user) {
-					Post.find({'userId': user._id})
-						.sort('-createdAt')
-						.exec((err, posts) => {
-							if (err) return sendError("user not found", res);
-					
-							res.json(posts);
-					});
-				} else return sendError("user not found", res);
-		});
-	} else {
-		throw "/profile query was illformed";
+			const user = await User.findOne(query)
+				.select({_id: 1, twitter: 1})
+				.exec();
+			if (!user) throw new Error("User not found");
+	
+			const posts = await Post.find({'userId': user._id})
+				.sort('-createdAt')
+				.exec();
+			if (!posts)	throw new Error("Error finding posts");
+	
+			const result = posts.map(post => post.toJSONFor(user))
+			return res.json(result)
+	
+			//console.log(result);
+		}	else {
+			const posts = await Post.find({}).sort('-createdAt').exec();
+			Promise.all(posts.map(post => post.toJSON()))
+				.then(results => {
+					//console.log(results);
+					return res.json(results);
+				})
+		}
+	} catch(err) {
+		sendError(err, res);
 	}
 });
 
-router.post('/post/new', isLoggedIn, (req, res) => {
-	let post = req.body,
-			user = req.user;
-	console.log('POST /api/post');
-	if (!post.title && post.title != "") {
-		// console.log('Post: ', post);
-		throw "Bad post title";
-	} else if (!post.url && post.url != "" && post.url.isURL()) {
-		// console.log('Post: ', post);
-		throw "Bad post URL";
-	} else if (!user && user._id != post.userId) {
-		// console.log('User: ', user);
-		throw "Bad session user data";
-	} else {
-		newPost(res, post, user);
+router.post('/post/new', isLoggedIn, async (req, res) => {
+	try {
+		let post = req.body,
+				user = req.user;
+		console.log('POST /api/post');
+		if (!post.title && post.title != "") {
+			// console.log('Post: ', post);
+			throw new Error("Bad post title");
+		} else if (!post.url && post.url != "" && post.url.isURL()) {
+			// console.log('Post: ', post);
+			throw new Error("Bad post URL");
+		} else if (!user && user._id != post.userId) {
+			// console.log('User: ', user);
+			throw new Error("Bad session user data");
+		} else {
+			newPost(res, post, user);
+		}
+	} catch(err) {
+		sendError(err, res);
 	}
 });
 
 router.get('/user', isLoggedIn, (req, res) => {
-	res.json(req.user);
+	return res.json(req.user);
 });
 
 /* 
