@@ -33,6 +33,7 @@
     "passport-oauth": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "rxjs": "^6.2.0",
+    "serialize-error": "^2.1.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
