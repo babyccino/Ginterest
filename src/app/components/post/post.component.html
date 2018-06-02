@@ -1,8 +1,10 @@
 <div class="gallery-item">
 	<img src="{{post.url}}">
 	<div class="gallery-text-container">
+		<img [src]="post.twitter.displayUrl">
 		<div class="gallery-text">
-			{{i}}
+			<h1>{{post.title}}</h1>
+			<p>{{post.body}}</p>
 		</div>
 	</div>
 </div>

@@ -18,9 +18,9 @@ export class HeaderComponent implements OnInit {
 	private _user: User;
 	private _userViewing: string = "/";
 
-	public get isAuthenticated()	{ return this._isAuthenticated }
-	public get user()							{ return this._user; }
-	public get userViewing()			{ return this._userViewing; }
+	public get isAuthenticated(): boolean	{ return this._isAuthenticated }
+	public get user(): User								{ return this._user; }
+	public get userViewing(): string			{ return this._userViewing; }
 
 	constructor(
 		private router: Router,

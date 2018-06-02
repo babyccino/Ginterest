@@ -20,14 +20,25 @@
 		right: 0;
 		height: 100%;
 		width: 100%;
+		transition: .3s ease;
 		opacity: 0;
-		transition: .5s ease;
+		background: rgba(0,0,0,0);
+
+		&:hover {
+			opacity: 1;
+			background: rgba(0,0,0,0.6);
+		}
+
+		img {
+			height: 48px;
+			width: 48px;
+		}
 
 		.gallery-text {
 			position: absolute;
 			bottom: 0;
-			left: 50%;
-			transform: translateX(-50%);
+			left: 0;
+			color: white;
 		}
 	}
 }

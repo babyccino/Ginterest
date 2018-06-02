@@ -31,7 +31,7 @@ export class PostService {
 	}
 
 	public fromUser(user: string): Observable<Post[]> {
-		return this.apiService.get(`/posts/by?username=${user}`);
+		return this.apiService.get(`/posts?username=${user}`);
 	}
 
 	public addPost(post: Post): void {
