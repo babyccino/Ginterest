@@ -1,14 +1,18 @@
 // Get dependencies
-const Express = require('express');
-const Path = require('path');
-const Http = require('http');
-const BodyParser = require('body-parser');
-const Cors = require('cors');
-const Fs = require('fs');
+const Express = require('express'),
+			Path = require('path'),
+			Http = require('http'),
+			BodyParser = require('body-parser'),
+			Cors = require('cors'),
+			Mongoose = require('mongoose'),
+			Fs = require('fs'),
+			DbConfig = require('./server/config/database.js');
+
+Mongoose.connect(DbConfig.database);
 
 // API file for interacting with MongoDB
-const index = require('./server/routes/index');
-const api = require('./server/routes/api');
+const index = require('./server/index'),
+			api = require('./server/api');
 
 const app = Express();
 

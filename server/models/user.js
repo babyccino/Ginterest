@@ -1,6 +1,5 @@
 const DbConfig = require('./../config/database'),
 			Mongoose = require('mongoose');
-Mongoose.connect(DbConfig.database);
 
 let userSchema = Mongoose.Schema({
 	twitter: {
