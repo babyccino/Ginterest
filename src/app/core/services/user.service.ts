@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
@@ -12,27 +13,25 @@ import { User } from './../models/user';
 })
 export class UserService {
   private currentUserSubject = new BehaviorSubject<User>({} as User);
-  public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
+  public currentUser = this.currentUserSubject.asObservable()
+  	.pipe( distinctUntilChanged() );
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  public isAuthenticated = this.isAuthenticatedSubject.asObservable().pipe(distinctUntilChanged());
+  public isAuthenticated = this.isAuthenticatedSubject.asObservable()
+  	.pipe( distinctUntilChanged() );
 
 	constructor(
-		private apiService: ApiService
-	) {
-		console.log('user service connected');
-	}
+		private apiService: ApiService,
+		private router: Router
+	) { }
 
 	populate() {
 		this.apiService.get('/user').subscribe(
 			response => {
-				console.log('UserService, user: ', response)
-				this.currentUserSubject.next(response);
+				this.currentUserSubject.next(response as User);
 				this.isAuthenticatedSubject.next(true);
-				console.log('this.currentUserSubject.value: ', this.currentUserSubject.value)
 			},
 			err => {
-				console.log('no user')
 				this.currentUserSubject.next({} as User);
 				this.isAuthenticatedSubject.next(false);
 			}

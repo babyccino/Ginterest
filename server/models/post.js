@@ -57,12 +57,23 @@ PostSchema.query.byUserId = function(id) {
 
 // model methods
 
-PostSchema.statics.all = function() {
-	return this.find({}).sort('-createdAt').exec();
+PostSchema.statics.all = function(count, before) {
+	let query = {};
+	if (before) {
+		if (before instanceof String)
+			before = new Date(before);
+
+		query.createdAt = {"$lt": before};
+	}
+
+	if (count)
+		return this.find(query).sort('-createdAt').limit(count).exec();
+	else
+		return this.find(query).sort('-createdAt').exec();
 }
 
-PostSchema.statics.allJSON = async function() {
-	const posts = await this.all();
+PostSchema.statics.allJSON = async function(count, before) {
+	const posts = await this.all(count, before);
 	return Promise.all(posts.map(post => post.toJSON()));
 }
 

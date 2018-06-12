@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule} from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
@@ -19,6 +20,8 @@ import { TestComponent } from './components/test/test.component';
 import { ApiService } from './core/services/api.service';
 import { UserService } from './core/services/user.service';
 import { PostService } from './core/services/post.service';
+import { PostResolverService } from './core/services/post-resolver.service';
+import { ErrorPageComponent } from './components/error-page/error-page.component';
 
 @NgModule({
   declarations: [
@@ -28,12 +31,14 @@ import { PostService } from './core/services/post.service';
     FooterComponent,
     HeaderComponent,
     TestComponent,
-    PostComponent
+    PostComponent,
+    ErrorPageComponent
   ],
   imports: [
     BrowserModule,
     RouterModule,
     HttpModule,
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule
@@ -41,7 +46,8 @@ import { PostService } from './core/services/post.service';
   providers: [
   	ApiService,
     UserService,
-    PostService
+    PostService,
+    PostResolverService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,12 +1,14 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+	Component,
+	OnInit,
+	HostListener
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { AddPostFormComponent } from './../add-post-form/add-post-form.component'
 
 import { UserService } from './../../core/services/user.service'
 import { User } from './../../core/models/user';
-import { Post } from './../../core/models/post';
 
 @Component({
 	selector: 'app-header',
@@ -14,13 +16,13 @@ import { Post } from './../../core/models/post';
 	styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-	private _isAuthenticated: boolean = true;
-	private _user: User;
-	private _userViewing: string = "/";
+	private isAuthenticated: boolean = false;
+	private userViewing: string;
+	private username: string;
 
-	public get isAuthenticated(): boolean	{ return this._isAuthenticated }
-	public get user(): User								{ return this._user; }
-	public get userViewing(): string			{ return this._userViewing; }
+	private get canPost(): boolean {
+		return this.username == this.userViewing || this.userViewing == '';
+	}
 
 	constructor(
 		private router: Router,
@@ -30,11 +32,12 @@ export class HeaderComponent implements OnInit {
 	ngOnInit() {
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
-				this._userViewing = event.url.slice(1);
+				this.userViewing = event.url.slice(6);
+				console.log(this.userViewing == '')
 			}
 		});
-		this.userService.currentUser.subscribe(res => this._user = res)
-		this.userService.isAuthenticated.subscribe(res => this._isAuthenticated = res)
+		this.userService.currentUser.subscribe( res => this.username = res.twitter.username );
+		this.userService.isAuthenticated.subscribe( res => this.isAuthenticated = res );
 	}
 
 }

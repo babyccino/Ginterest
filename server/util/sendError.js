@@ -1,7 +1,8 @@
 module.exports = (err, res) => {
-	let message = typeof(err) == 'object' ? err.message: err;
+	let message = err.message ? err.message : err;
+	let status = err.status ? err.status : 500;
 	if (err.stack)
 		console.log("error stack: ", err.stack);
 
-	return res.status(500).send(err);
+	return res.status(status).send(err);
 }
