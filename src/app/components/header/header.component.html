@@ -1,33 +1,49 @@
 <div class="my-nav-wrap">
 	<div class="my-nav-container">
 		<div class="my-nav">
-			<a class="animation-transition button-container home"
-				[ngClass]="{'underline': userViewing == ''}" [routerLink]="'/'">Home</a>
-			<a class="animation-transition button-container my-nav-left underline">{{userViewing}}</a>
-			<div class="dropdown-container animation-transition button-container"
-				*ngIf="isAuthenticated">
-				<button class="dropdown-button">Post</button>
-				<!-- tabindex to make elements focusable, necessary for the css only dropdown -->
-				<div class="dropdown-content">
-					<div class="new-post-header">
-						<div class="new-post-title" tabindex="-1">New Post</div>
-						<p class="new-post-close">&times;</p>
+			<span class="my-nav-left">
+				<div class=collapsible-container tabindex="-1">
+					<a class="collapsible-button button-container" tabindex="-1">
+						<i class="fa fa-bars"></i>
+					</a>
+					<div class="collapsible-content" tabindex="-1">
+						<a class="animation-transition button-container home"
+							[ngClass]="{'active': userViewing == ''}" [routerLink]="'/'">
+							Home
+						</a>
+						<a class="animation-transition button-container active"
+							*ngIf="userViewing != ''">
+							{{userViewing}}
+						</a>
 					</div>
-					<hr class="post-separator">
-					<app-add-post-form class="flex-grow" tabindex="-1"></app-add-post-form>
 				</div>
-				<div class="screen"></div>
-			</div>
-			<a class="img-container" [routerLink]="['/', user.twitter.username]"
-				*ngIf="isAuthenticated">
-				<img class="twitter" [src]="user.twitter.displayUrl">
-			</a>
-			<div class="unauthenticated" *ngIf="!isAuthenticated">
-				<a href="/api/auth/twitter" class="btn btn-info"
-					role="button">
-					<i class="fa fa-twitter"></i>Sign in with Twitter
+			</span>
+			<ng-container *ngIf="isAuthenticated">
+				<a class="button-container" href="/api/logout">Logout</a>
+				<div class="dropdown-container animation-transition button-container"
+					tabindex="-1" *ngIf="canPost">
+					<button class="dropdown-button">Post</button>
+					<!-- tabindex to make elements focusable, necessary for the css only dropdown -->
+					<div class="dropdown-content">
+						<div class="new-post-header">
+							<div class="new-post-title" tabindex="-1">New Post</div>
+							<p class="new-post-close">&times;</p>
+						</div>
+						<hr class="post-separator">
+						<app-add-post-form class="flex-grow" tabindex="-1"></app-add-post-form>
+					</div>
+					<div class="screen"></div>
+				</div>
+				<a class="img-container" [routerLink]="['/user', username]"
+					*ngIf="isAuthenticated">
+					<img class="twitter" [src]="user.twitter.displayUrl">
 				</a>
-			</div>
+			</ng-container>
+			<a href="/api/auth/twitter" class="btn sign-in"
+				role="button" *ngIf="!isAuthenticated">
+				<i class="fa fa-twitter"></i>
+				Sign in
+			</a>
 		</div>
 	</div>
 </div>
