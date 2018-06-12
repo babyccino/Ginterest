@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map, distinctUntilChanged, skip } from 'rxjs/operators';
 
 import { ApiService } from './api.service'
 
@@ -11,47 +12,52 @@ import { Post } from './../models/post';
 	providedIn: 'root'
 })
 export class PostService {
-	private postsSubject = new BehaviorSubject<Post[]>([] as Post[]);
-	public posts = this.postsSubject.asObservable().pipe(distinctUntilChanged());
+	private newPostSubject = new BehaviorSubject<Post>({} as Post);
+	public newPost = this.newPostSubject.asObservable()
+		.pipe( distinctUntilChanged() )
+		.pipe( skip(1) );
 
 	constructor (
+		private router: Router,
 		private apiService: ApiService
 	) { }
 
-	public populate(): void {
-		this.apiService.get('/posts').subscribe(
-			response => {
-				console.log('retrieved posts');
-				this.postsSubject.next(response);
-			},
-			err => {
-				console.log('error retrieving posts, err: ', err);
-			}
-		);
+	public get(before?: string | Date, user?: string): Observable<Post[]> {
+		if (before && before instanceof Date)
+			before = before.toISOString();
+
+		let url = '/posts?limit=12';
+
+		if (user)
+			url += `&username=${user}`;
+
+		if (before)
+			url += `&before=${before}`;
+
+		return this.apiService.get(url);
 	}
 
-	public fromUser(user: string): Observable<Post[]> {
-		return this.apiService.get(`/posts?username=${user}`);
+	public addPost(post: Post): Observable<Post> {
+		return this.apiService.post('/posts', post)
+			.pipe(map(
+				res => {
+					this.newPostSubject.next(res);
+
+					return res;
+				}
+			));
 	}
 
-	public addPost(post: Post): void {
-		this.apiService.post('/post/new', post).subscribe(
-			response => {
-				console.log('response: ', response);
-				// add post to posts without querying server again
-				let arr = this.postsSubject.value;
-				arr.unshift(post);
-				this.postsSubject.next(arr);
-				console.log('this.postsSubject.value: ', this.postsSubject.value);
-			},
-			err => {
-				console.log('Error adding post: ', err);
-			}
-		);
+	public delete(id: string): Observable<boolean> {
+		return this.apiService.delete(`/posts?id=${id}`)
+			.pipe(map(
+				res => {
+					if (!res)
+						this.router.navigateByUrl('/**');
+
+					return res;
+				}
+			));
 	}
 
-	public getPosts(): Post[] {
-		return this.postsSubject.value;
-	}
-	
 }

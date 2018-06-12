@@ -1,10 +1,31 @@
 <div class="gallery-item">
 	<img src="{{post.url}}">
 	<div class="gallery-text-container">
-		<img [src]="post.twitter.displayUrl">
+		<a [routerLink]="['/user', post.twitter.username]">
+			<img [src]="post.twitter.displayUrl">
+		</a>
 		<div class="gallery-text">
 			<h1>{{post.title}}</h1>
 			<p>{{post.body}}</p>
+		</div>
+		<a class="btn button top-right delete" tabindex="-1"
+			*ngIf="canDelete">
+			Delete Post
+		</a>
+		<div class="btn top-right are-you-sure" tabindex="-1"
+			*ngIf="canDelete">
+			<p>Are you sure?</p>
+			<hr class="post-separator">
+			<div class="button-container">
+				<a class="yes" tabindex="-1"
+					*ngIf="canDelete" (click)="deletePost()">
+					Yes
+				</a>
+				<p class=""
+					*ngIf="canDelete">
+					No
+				</p>
+			</div>
 		</div>
 	</div>
 </div>

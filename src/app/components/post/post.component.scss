@@ -1,28 +1,36 @@
 .gallery-item {
 	position: relative;
-	margin: 0;
+
+	height: 100%;
 	padding: 0;
+
+	* {
+		border-radius: 2%;
+	}
 
 	img {
 		display: block;
+
+		max-height: 100%;
+		max-width: 100%;
 		margin: 0;
 		padding: 0;
 		vertical-align: middle;
-		height: auto;
-		width: 100%;
 	}
 
 	.gallery-text-container {
 		position: absolute;
 		top: 0;
 		bottom: 0;
-		left: 0;
-		right: 0;
+
 		height: 100%;
 		width: 100%;
+		padding: 10px;
+
+		background: rgba(0,0,0,0);
+
 		transition: .3s ease;
 		opacity: 0;
-		background: rgba(0,0,0,0);
 
 		&:hover {
 			opacity: 1;
@@ -32,13 +40,95 @@
 		img {
 			height: 48px;
 			width: 48px;
+			border-radius: 50%;
 		}
 
 		.gallery-text {
 			position: absolute;
-			bottom: 0;
-			left: 0;
+			bottom: 10px;
+			left: 10px;
+
 			color: white;
 		}
+
+		.top-right {
+			position: absolute;
+			top: 16px;
+			right: 10px;
+		}
+
+		.button {
+			border-radius: 999px;
+
+			color: white;
+			font-size: 16px;
+			background: rgba(255, 255, 255, 0.1);
+
+			&:hover {
+				background: rgba(255, 255, 255, 0.3);
+			}
+
+			&:focus {
+				border: none;
+			}
+		}
+
+		.delete {
+			&:focus {
+				transform: scale(0.0);
+
+				& ~ .are-you-sure {
+					transform: scale(1.0);
+				}
+			}
+		}
+
+		.are-you-sure {
+			border-radius: 5%;
+
+			color: black;
+
+			background: rgba(255, 255, 255, 1);
+			transform: scale(0.0);
+
+			&:focus-within {
+				transform: scale(1.0);
+			}
+
+			.separator {
+				width: 100%;
+				margin: 0;
+			}
+
+			.button-container {
+				display: flex;
+				justify-content: space-around;
+
+				* {
+					display: inline-block;
+					padding: 5px 9px;
+					margin: 0 10px;
+					
+					background: #333;
+					color: white;
+
+					&:hover {
+						background: #666;
+					}
+				}
+			}
+		}
 	}
+}
+
+:host-context(.gallery-column-4) .gallery-item {
+	margin-bottom: calc(4vw / 5);
+}
+
+:host-context(.gallery-column-2) .gallery-item {
+	margin-bottom: calc(4vw / 3);
+}
+
+:host-context(.gallery-column-1) .gallery-item {
+	margin-bottom: calc(4vw / 2);
 }
