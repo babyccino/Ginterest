@@ -1,10 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Output } from '@angular/core';
+import {
+	FormBuilder,
+	FormControl,
+	FormGroup,
+	Validators
+} from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { Observable, zip } from 'rxjs';
 
 import { UserService } from './../../core/services/user.service';
 import { PostService } from './../../core/services/post.service';
-import { User } from './../../core/models/user';
 import { Post } from './../../core/models/post';
+
+import imageURLValidator from './../../core/util/imageURLValidator';
 
 @Component({
 	selector: 'app-add-post-form',
@@ -12,53 +21,50 @@ import { Post } from './../../core/models/post';
 	styleUrls: ['./add-post-form.component.scss']
 })
 export class AddPostFormComponent {
-	private regExp: string = '^(http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?';
-	private isAuthenticated: boolean = true;
-	private user: User = {
-		_id: '5afcfacdc2b2a82344772cf5',
-		twitter: {
-			id : "845180875704692737",
-			token : "845180875704692737-9OWnm60RtkLD9rnGEprKAc5VHrP3oih",
-			username : "babyccino1",
-			displayName : "Gus Ryan",
-			displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3i_normal.jpg"
-		}
-	};
+	private regExp: RegExp = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
   private signUpForm: FormGroup;
 
 	constructor (
 		private fb: FormBuilder,
+		private router: Router,
 		private userService: UserService,
 		private postService: PostService
 	) { }
 
 	ngOnInit() {
-		this.signUpForm  = this.fb.group({
+		this.signUpForm = this.fb.group({
 			title: ['', Validators.required],
 			url: ['',[
 				Validators.required,
 				Validators.pattern(this.regExp)
+			], [
+				imageURLValidator
 			]],
 			body: ''
-		})
-		//this.userService.currentUser.subscribe(res => this.user = res)
-		//this.userService.isAuthenticated.subscribe(res => this.isAuthenticated = res)
+		});
 	}
 
-	public get title()	{ return this.signUpForm.get('title'); 	}
-	public get url()		{ return this.signUpForm.get('url'); 		}
-	public get body()	{ return this.signUpForm.get('body'); 	}
+	private get title()	{ return this.signUpForm.get('title'); 	}
+	private get url()		{ return this.signUpForm.get('url'); 		}
+	private get body()		{ return this.signUpForm.get('body'); 	}
 
-	public onFormSubmit(): void {
+	private onFormSubmit(): void {
 		if (this.signUpForm.valid) {
-			let post:Post = this.signUpForm.value;
-			post.userId = this.user._id;
-			post.twitter = {
-				username: this.user.twitter.username,
-				displayUrl: this.user.twitter.displayUrl
-			};
-			console.log('posting: ', post);
-			this.postService.addPost(post);
+			zip(
+				this.userService.isAuthenticated,
+				this.userService.currentUser
+			).subscribe(
+				res => {
+					if (!res[0]) return;
+
+					let post:Post = this.signUpForm.value;
+					post.userId = res[1]._id;
+					post.twitter = res[1].twitter;
+					this.postService.addPost(post).subscribe(
+						res => this.signUpForm.reset()
+					);
+				}
+			);
 		}
 	}
 }

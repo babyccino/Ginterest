@@ -9,36 +9,37 @@
 			<div>
 				<input type="text"
 					id="inputTitle" formControlName="title"
-					placeholder="Title" class="form-control"
-					[ngClass]="{'invalid-border': title.invalid && title.touched}">
+					placeholder="Title" class="form-control">
 			</div>
 
 			<!-- Title error block -->
 			<div class="invalid-text" *ngIf="title.invalid && title.touched">
 				<small *ngIf = "title.errors?.required">
-						Title field can't be blank
+					Title field can't be blank
 				</small>
 			</div>
 		</div>
 
 		<!--- URL Block -->
 		<div class="form-group">
-			<label for="inputURL">URL</label>
+			<label for="inputURL">Url</label>
 			
 			<div>
 				<input type="text"
 					id="inputURL" formControlName="url"
-					placeholder="URL" class="form-control"
-					[ngClass]="{'invalid-border': url.invalid && url.touched}">
+					placeholder="Url" class="form-control">
 			</div>
 
 			<!-- URL error block -->
 			<div class="invalid-text" *ngIf="url.invalid && url.touched">
 				<small *ngIf = "url.errors?.required">
-						URL field can't be blank
+					Url field can't be blank
 				</small>
 				<small *ngIf = "url.errors?.pattern">
-						Invalid URL
+					Url is invalid
+				</small>
+				<small *ngIf = "url.errors?.notImage">
+					Resource associated with Url is not an image
 				</small>
 			</div>
 		</div>
@@ -59,7 +60,8 @@
 		<!--- Buttons Block -->
 		<div class="button-container">
 			<button type="reset" class="btn btn-default">Clear</button>
-			<button type="submit" [disabled] = "!signUpForm.valid" class="btn btn-primary">Submit</button>
+			<button type="submit" [disabled] = "!signUpForm.valid"
+				class="btn btn-primary">Submit</button>
 		</div>
 	</fieldset>
 </form>
