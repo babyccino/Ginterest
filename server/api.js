@@ -42,8 +42,8 @@ router.get('/logout', (req, res) => {
 	return res.redirect('/');
 });
 router.get('/posts', Get.posts);
-router.get('/user', Auth.isLoggedIn, (req, res) => {
-	return res.json(req.user);
+router.get('/user', (req, res) => {
+	return res.json(req.user ? req.user : false);
 });
 
 router.post('/posts', Auth.isLoggedIn, Post.newPost);

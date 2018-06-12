@@ -18,8 +18,10 @@ import { User } from './../../core/models/user';
 export class HeaderComponent implements OnInit {
 	private isAuthenticated: boolean = false;
 	private userViewing: string;
-	private username: string;
+	private user: User;
 
+	private get username(): string { return this.user ? this.user.twitter.username : null; }
+	private get displayUrl(): string { return this.user ? this.user.twitter.displayUrl : null; }
 	private get canPost(): boolean {
 		return this.username == this.userViewing || this.userViewing == '';
 	}
@@ -33,10 +35,9 @@ export class HeaderComponent implements OnInit {
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
 				this.userViewing = event.url.slice(6);
-				console.log(this.userViewing == '')
 			}
 		});
-		this.userService.currentUser.subscribe( res => this.username = res.twitter.username );
+		this.userService.currentUser.subscribe( res => this.user = res._id ? res : null );
 		this.userService.isAuthenticated.subscribe( res => this.isAuthenticated = res );
 	}
 

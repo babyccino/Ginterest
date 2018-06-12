@@ -36,7 +36,7 @@
 				</div>
 				<a class="img-container" [routerLink]="['/user', username]"
 					*ngIf="isAuthenticated">
-					<img class="twitter" [src]="user.twitter.displayUrl">
+					<img class="twitter" [src]="displayUrl">
 				</a>
 			</ng-container>
 			<a href="/api/auth/twitter" class="btn sign-in"

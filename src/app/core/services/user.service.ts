@@ -27,13 +27,12 @@ export class UserService {
 
 	populate() {
 		this.apiService.get('/user').subscribe(
-			response => {
-				this.currentUserSubject.next(response as User);
-				this.isAuthenticatedSubject.next(true);
-			},
-			err => {
-				this.currentUserSubject.next({} as User);
-				this.isAuthenticatedSubject.next(false);
+			res => {
+				if (res) {
+					this.currentUserSubject.next(res as User);
+					this.isAuthenticatedSubject.next(true);
+				} else
+					this.isAuthenticatedSubject.next(false);
 			}
 		);
 	}

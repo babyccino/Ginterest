@@ -31,7 +31,8 @@ export class PostComponent implements OnInit {
 	ngOnInit() {
 		this.userService.currentUser.subscribe(
 			res => {
-				this.canDelete = this.canDelete && (this.post.userId === res._id);
+				if (res._id)
+					this.canDelete = this.canDelete && (this.post.userId === res._id);
 			}
 		);
 		this.userService.isAuthenticated.subscribe(
