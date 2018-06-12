@@ -1,8 +1,8 @@
 module.exports = {
-	secret: YOUR_SECRET,
+	secret: 'OywaVEGIGHebmbV2mgZEPqxP2SbNSnyB1WwcO26wzjQmLsLYh5',
 	twitter: {
-		consumerKey: YOUR_CONSUMER_KEY,
-		consumerSecret: YOUR_CONSUMER_SECRET,
-		callbackURL: YOUR_CALLBACK_URL
+		consumerKey: 'hIaTpubVMAnGthqfWU790fCes',
+		consumerSecret: 'OywaVEGIGHebmbV2mgZEPqxP2SbNSnyB1WwcO26wzjQmLsLYh5',
+		callbackURL: 'http://localhost:3000/api/auth/twitter/callback '
 	}
 };

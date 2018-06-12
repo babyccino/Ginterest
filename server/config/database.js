@@ -1,4 +1,4 @@
 module.exports = {
-  secret: YOUR_SECRET,
-  database: YOUR_DATABASE
+  secret: 'meansecure',
+  database: 'mongodb://localhost/ginterest'
 };
