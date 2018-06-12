@@ -1,0 +1,41 @@
+$height: 70px;
+
+.footer-container {
+	height: $height;
+	width: 100%;
+
+	.footer {
+		position: absolute;
+		bottom: 0;
+		
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-top: 1px solid #DDD;
+		
+		height: $height;
+		width: 100%;
+		
+		background: white;
+
+		.footer-content {
+			font-size: 50px;
+
+			* {
+				margin: 0 7px 0 7px;
+			}
+
+			.linkedin {
+				color: #0073b1;
+			}
+
+			.github {
+				color: black;
+			}
+
+			.fcc {
+				color: darkgreen;
+			}
+		}
+	}
+}

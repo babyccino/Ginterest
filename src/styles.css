@@ -3,11 +3,17 @@
 @import url('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css');
 @import url('https://fonts.googleapis.com/css?family=PT+Sans');
 
+html { height: 100%; }
 body {
+	position: relative;
 	font-family: 'PT Sans', sans-serif;
+	min-height: 100%
 }
 
 button:hover	{cursor: pointer}
-a:hover 			{cursor: pointer}
+a:hover 			{
+	cursor: pointer;
+	text-decoration: none;
+}
 label:hover 	{cursor: text;}
 *:focus 			{outline: 0;}
