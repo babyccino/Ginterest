@@ -13,7 +13,6 @@ describe('models', () => {
     const db = Mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error'));
     db.once('open', function() {
-      console.log('We are connected to test database!');
       testData.init(done);
     });
 	});
@@ -112,6 +111,13 @@ describe('models', () => {
 				it('all static should give all posts', done => {
 					Post.all().then(res => {
 						compare(res, testData.allPosts, testData.postSelect);
+						done();
+					}).catch(done);
+				});
+
+				it('all static with arg should give all posts with a limited amount', done => {
+					Post.all(2).then(res => {
+						compare(res, testData.allPosts.slice(0, 2), testData.postSelect);
 						done();
 					}).catch(done);
 				});

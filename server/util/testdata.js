@@ -37,7 +37,7 @@ const testUsers = [
 					}
 				},
 				{
-					_id : "5b0ab85fcfe0e825a6cc33d3",
+					_id : "5b0ab85fcfe0e825a6cc33d4",
 					userId : "5b0ab85fcfe0e825a6cc33d0",
 					title : "hi",
 					url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
@@ -48,7 +48,18 @@ const testUsers = [
 					}
 				},
 				{
-					_id : "5b0ab85fcfe0e825a6cc33d4",
+					_id : "5b0ab85fcfe0e825a6cc33d5",
+					userId : "5b0ab85fcfe0e825a6cc33d0",
+					title : "hi",
+					url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
+					body : "",
+					twitter : {
+						username : "babyccino1",
+						displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3i_normal.jpg"
+					}
+				},
+				{
+					_id : "5b0ab85fcfe0e825a6cc33d6",
 					userId : "5b0ab85fcfe0e825a6cc33d1",
 					title : "hi",
 					url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
@@ -59,7 +70,18 @@ const testUsers = [
 					}
 				},
 				{
-					_id : "5b0ab85fcfe0e825a6cc33d5",
+					_id : "5b0ab85fcfe0e825a6cc33d7",
+					userId : "5b0ab85fcfe0e825a6cc33d1",
+					title : "hi",
+					url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
+					body : "",
+					twitter : {
+						username : "babyccino2",
+						displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3a_normal.jpg"
+					}
+				},
+				{
+					_id : "5b0ab85fcfe0e825a6cc33d8",
 					userId : "5b0ab85fcfe0e825a6cc33d1",
 					title : "hi",
 					url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
@@ -70,6 +92,21 @@ const testUsers = [
 					}
 				}
 			];
+
+module.exports.testNewPost = {
+	_id : "5b0ab85fcfaaa825a6cc33d9",
+	userId : "5b0ab85fcfe0e825a6cc33d1",
+	title : "hi",
+	url : "https://i.redditmedia.com/lM1GpuB5WhuKzk8twat0AuGxJMSE3tjGnKa5XBHs1e4.jpg?fit=crop&crop=faces%2Centropy&arh=2&w=640&s=3baf4018b19dfc74657fd7129c5f5809",
+	body : "",
+	twitter : {
+		username : "babyccino2",
+		displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3a_normal.jpg"
+	}
+};
+module.exports.invalidPostId = "5b0ab85fcfe0e825a6cc33a1";
+module.exports.invalidUserId = "5b0ab85fcfe0e825a6cc33a2";
+module.exports.invalidUsername = "wadup";
 
 module.exports.init = function(done) {
 	User.insertMany(testUsers, (err, users) => {
@@ -89,7 +126,7 @@ module.exports.init = function(done) {
 				module.exports.postsByUser2 = [];
 
 				for (post of posts) {
-					if (post.userId.toString() === user1Id){
+					if (post.userId.toString() === user1Id) {
 						post["twitter"] = {
 							username : "babyccino1",
 							displayUrl : "https://pbs.twimg.com/profile_images/942947061225340928/z3yRZv3i_normal.jpg"
@@ -112,11 +149,11 @@ module.exports.init = function(done) {
 };
 
 module.exports.reInit = (done) => {
-  Mongoose.connection.db.dropCollection('Post', () => {
-	  Mongoose.connection.db.dropCollection('User', () => {
-	  	module.exports.init(done);
-	  });
-  });
+	Mongoose.connection.db.dropCollection('Post', () => {
+		Mongoose.connection.db.dropCollection('User', () => {
+			module.exports.init(done);
+		});
+	});
 };
 
 module.exports.userSelect = {
@@ -140,10 +177,7 @@ module.exports.postSelect = {
 	userId : true,
 };
 module.exports.postNotSelect = {
-	id : false,
-	title : null,
-	url : null,
-	body : null
+	id : false
 };
 module.exports.postJSONSelect = {
 	id : true,
