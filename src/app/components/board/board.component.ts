@@ -13,7 +13,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, skip } from 'rxjs/operators';
 
 import { PostComponent } from './../post/post.component';
 
@@ -45,7 +45,8 @@ enum AddDirection {
 export class BoardComponent implements OnInit {
 	private columnCountSubject = new BehaviorSubject<number>(0);
 	public columnCountObservable = this.columnCountSubject.asObservable()
-		.pipe( distinctUntilChanged() );
+		.pipe( distinctUntilChanged() )
+		.pipe( skip(1) );
 
 	private get columnCount(): number { return this.columnCountSubject.value; }
 	private set columnCount(value: number) { this.columnCountSubject.next(value); }
@@ -53,10 +54,10 @@ export class BoardComponent implements OnInit {
 	private posts: Post[] = [];
 	private userViewing: string = "";
 	private lastPostDate: Date;
-	private loading: boolean = false;
 	private atEnd: boolean = false;
 	private columns: Post[][] = [];
 	private columnHeights: number[];
+	private loading: boolean = false;
 
 	constructor (
 		private route: ActivatedRoute,
@@ -64,14 +65,18 @@ export class BoardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.columns = Array.from({length: 4}, () => []);
+		this.columnHeights = Array(4).fill(0);
+
 		this.setColumnCount();
 
 		this.columnCountObservable.subscribe(
-			res => this.reOrganiseColumns()
+			res => { if (res > 1) this.reOrganiseColumns(res) }
 		);
 
 		this.route.data.subscribe(
 			data => {
+				this.loading = true;
 				this.posts = data.posts;
 				this.lastPostDate = this.posts[this.posts.length - 1].createdAt;
 				this.reOrganiseColumns();
@@ -104,11 +109,9 @@ export class BoardComponent implements OnInit {
 					.subscribe(
 						res => {
 							if (res.length < 12)
-								this.atEnd = true;
+								this.atEnd = true, this.loading = false;
 							else
 								this.addPosts(res);
-							
-							this.loading = false;
 						}
 					);
 			}
@@ -125,55 +128,102 @@ export class BoardComponent implements OnInit {
 	}
 
 	private reOrganiseColumns(columnCount:number = this.columnCount): void {
+		if (this.columnCount < 2) {
+			this.loading = false;
+			return;
+		}
+
 		this.columns = Array.from({length: columnCount}, () => []);
 		this.columnHeights = Array(columnCount).fill(0);
-		this.addToColumns(this.posts, columnCount);
+		this.addToColumns(this.posts.slice(), columnCount);
 	}
 
-	private addToColumns(posts: Post[] | Post, columnCount: number = this.columnCount,
-		addDirection:AddDirection = AddDirection.push): void {
-		if (!(posts instanceof Array)) posts = [posts];
+	private addToColumnsPromise = (post: Post, columnCount: number = this.columnCount,
+			addDirection:AddDirection = AddDirection.push): Promise<any> => {
+		let img = new Image();
+		return new Promise( (res, rej) => {
+			img.onload = () => {
+				let ratio = img.naturalHeight/img.naturalWidth;
+				let min = Math.min(...this.columnHeights);
+				for (let i = 0; i < columnCount; ++i)
+					if (this.columnHeights[i] === min) {
+						if (addDirection == AddDirection.push)
+							this.columns[i].push(post);
+						else
+							this.columns[i].unshift(post);
 
-		if (columnCount > 1)
-			for (let post of posts) {
-				let img = new Image();
-				img.onload = () => {
-					let ratio = img.naturalHeight/img.naturalWidth;
-					let min = Math.min(...this.columnHeights);
-					for (let i = 0; i < columnCount; ++i)
-						if (this.columnHeights[i] === min) {
-							if (addDirection == AddDirection.push)
-								this.columns[i].push(post);
-							else
-								this.columns[i].unshift(post);
-
-							this.columnHeights[i] += ratio;
-							break;
-						}
-				}
-				
-				img.src = post.url;
+						this.columnHeights[i] += ratio;
+						res();
+						break;
+					}
 			}
-		else
-			if (addDirection == AddDirection.push)
-				this.columns[0] = this.columns[0].concat(posts);
-			else
-				this.columns[0] = posts.concat(this.columns[0]);
+			img.onerror = () => rej();
+			
+			img.src = post.url;
+		});
+	}
+
+	private addToColumns(posts: Post | Post[], columnCount: number = this.columnCount,
+			addDirection:AddDirection = AddDirection.push): void {
+		if (this.columnCount < 2) {
+			this.loading = false;
+			return;
+		}
+		
+		if (posts instanceof Array) {
+			/*
+				Here the input posts are split into an array (the same size as the column count)
+				called batch and the remainder. All posts in batch are added to the board.
+				When all posts are finished being added the remainder will be operated on.
+				This is done so the posts are at least close to being in chronological order.
+			*/
+			let batch = posts.splice(0, columnCount);
+			let that = this;
+			Promise.all( batch.map(
+				post => this.addToColumnsPromise(post, columnCount, addDirection)
+			))
+				.then( res => {
+					if (posts.length > 0)
+						this.addToColumns(posts, columnCount, addDirection);
+					else
+						this.loading = false;
+				})
+				.catch( err => console.log("addToColumnsPromise failed") );
+		} else {
+			this.addToColumnsPromise(posts, columnCount, addDirection)
+				.then( res => this.loading = false );
+		}
 	}
 
 	private addPosts(posts: Post[] | Post, columnCount: number = this.columnCount,
 		addDirection:AddDirection = AddDirection.push): void {
-		if (!(posts instanceof Array)) posts = [posts];
+		if (posts instanceof Array) {
+			if (addDirection === AddDirection.push)
+				this.lastPostDate = new Date(posts[posts.length - 1].createdAt);
 
-		if (addDirection === AddDirection.push)
-			this.lastPostDate = new Date(posts[posts.length - 1].createdAt);
+			if (this.columnCount > 1)
+				this.addToColumns(posts, this.columnCount, addDirection);
+			else
+				this.loading = false;
 
-		this.addToColumns(posts, this.columnCount, addDirection);
+			if (addDirection == AddDirection.push)
+				this.posts = this.posts.concat(posts);
+			else
+				this.posts = posts.concat(this.posts);
+		} else {
+			if (addDirection === AddDirection.push)
+				this.lastPostDate = new Date(posts.createdAt);
 
-		if (addDirection == AddDirection.push)
-			this.posts = this.posts.concat(posts);
-		else
-			this.posts = posts.concat(this.posts);
+			if (this.columnCount > 1)
+				this.addToColumns(posts, this.columnCount, addDirection);
+			else
+				this.loading = false;
+
+			if (addDirection == AddDirection.push)
+				this.posts.push(posts);
+			else
+				this.posts.unshift(posts);
+		}
 	}
 
 	private deletePost(position: number[]): void {
